@@ -1,19 +1,96 @@
 package com.laba.solvd;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.util.Scanner;
+
 public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+
+    private static void displayMenu() {
+        System.out.println("Student Record Management System");
+        System.out.println("1. Add New Student");
+        System.out.println("2. Update Student Information");
+        System.out.println("3. View Student Details");
+        System.out.println("4. View All Students");
+        System.out.println("5. Exit");
+        System.out.print("Choose an option: ");
+    }
+
+    private static void addNewStudent() {
+        System.out.print("Enter Student Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Student ID: ");
+        String studentId = scanner.nextLine();
+        System.out.print("Enter Student Age: ");
+        int age = Integer.parseInt(scanner.nextLine());
+        System.out.print("Enter Student Grade: ");
+        String grade = scanner.nextLine();
+
+        Student student = new Student(name, studentId, age, grade);
+        StudentManagement.addStudent(student);
+        System.out.println("Student added successfully!");
+    }
+
+    private static void updateStudentInformation() {
+        System.out.print("Enter Student ID to update: ");
+        String studentId = scanner.nextLine();
+
+        Student student = StudentManagement.getStudent(studentId);
+        if (student != null) {
+            System.out.print("Enter new name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter new age: ");
+            int age = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter new grade: ");
+            String grade = scanner.nextLine();
+
+            boolean updated = StudentManagement.updateStudent(studentId, name, age, grade);
+            if (updated) {
+                System.out.println("Student information updated successfully.");
+            } else {
+                System.out.println("Error updating student information.");
+            }
+        } else {
+            System.out.println("Student ID not found.");
+        }
+    }
+
+    private static void viewStudentDetails() {
+        System.out.print("Enter Student ID to view: ");
+        String studentId = scanner.nextLine();
+
+        Student student = StudentManagement.getStudent(studentId);
+        if (student != null) {
+            student.displayDetails();
+        } else {
+            System.out.println("Student ID not found.");
+        }
+    }
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        int option;
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        while (true) {
+            displayMenu();
+            option = Integer.parseInt(scanner.nextLine());
 
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+            switch (option) {
+                case 1:
+                    addNewStudent();
+                    break;
+                case 2:
+                    updateStudentInformation();
+                    break;
+                case 3:
+                    viewStudentDetails();
+                    break;
+                case 4:
+                    StudentManagement.displayAllStudents();
+                    break;
+                case 5:
+                    System.out.println("Exiting the system.");
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
         }
     }
 }
