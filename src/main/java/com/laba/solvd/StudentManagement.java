@@ -7,6 +7,13 @@ public class StudentManagement {
     private static int totalStudents = 0;
 
     public static void addStudent(Student student) {
+        if (student.name.isEmpty() || student.studentId.isEmpty() || student.grade.isEmpty()) {
+            throw new IllegalArgumentException("Name, Student ID, and Grade cannot be empty.");
+        }
+        if (student.age <= 0) {
+            throw new IllegalArgumentException("Age must be a positive integer.");
+        }
+
         studentList.add(student);
         totalStudents++;
     }
@@ -18,7 +25,7 @@ public class StudentManagement {
                 return true;
             }
         }
-        return false;
+        throw new StudentNotFoundException("Student with ID " + studentId + " not found.");
     }
 
     public static Student getStudent(String studentId) {
@@ -27,7 +34,7 @@ public class StudentManagement {
                 return student;
             }
         }
-        return null;
+        throw new StudentNotFoundException("Student with ID " + studentId + " not found.");
     }
 
     public static void displayAllStudents() {

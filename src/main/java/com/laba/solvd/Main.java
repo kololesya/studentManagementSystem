@@ -16,26 +16,28 @@ public class Main {
     }
 
     private static void addNewStudent() {
-        System.out.print("Enter Student Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter Student ID: ");
-        String studentId = scanner.nextLine();
-        System.out.print("Enter Student Age: ");
-        int age = Integer.parseInt(scanner.nextLine());
-        System.out.print("Enter Student Grade: ");
-        String grade = scanner.nextLine();
+        try {
+            System.out.print("Enter Student Name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter Student ID: ");
+            String studentId = scanner.nextLine();
+            System.out.print("Enter Student Age: ");
+            int age = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter Student Grade: ");
+            String grade = scanner.nextLine();
 
-        Student student = new Student(name, studentId, age, grade);
-        StudentManagement.addStudent(student);
-        System.out.println("Student added successfully!");
+            Student student = new Student(name, studentId, age, grade);
+            StudentManagement.addStudent(student);
+            System.out.println("Student added successfully!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 
     private static void updateStudentInformation() {
-        System.out.print("Enter Student ID to update: ");
-        String studentId = scanner.nextLine();
-
-        Student student = StudentManagement.getStudent(studentId);
-        if (student != null) {
+        try {
+            System.out.print("Enter Student ID to update: ");
+            String studentId = scanner.nextLine();
             System.out.print("Enter new name: ");
             String name = scanner.nextLine();
             System.out.print("Enter new age: ");
@@ -43,28 +45,26 @@ public class Main {
             System.out.print("Enter new grade: ");
             String grade = scanner.nextLine();
 
-            boolean updated = StudentManagement.updateStudent(studentId, name, age, grade);
-            if (updated) {
-                System.out.println("Student information updated successfully.");
-            } else {
-                System.out.println("Error updating student information.");
-            }
-        } else {
-            System.out.println("Student ID not found.");
+            StudentManagement.updateStudent(studentId, name, age, grade);
+            System.out.println("Student information updated successfully.");
+        } catch (StudentNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     private static void viewStudentDetails() {
-        System.out.print("Enter Student ID to view: ");
-        String studentId = scanner.nextLine();
-
-        Student student = StudentManagement.getStudent(studentId);
-        if (student != null) {
+        try {
+            System.out.print("Enter Student ID to view: ");
+            String studentId = scanner.nextLine();
+            Student student = StudentManagement.getStudent(studentId);
             student.displayDetails();
-        } else {
-            System.out.println("Student ID not found.");
+        } catch (StudentNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
+
     public static void main(String[] args) {
         int option;
 
