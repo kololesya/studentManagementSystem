@@ -45,17 +45,6 @@ public class Student {
         return enrolledCourses;
     }
 
-//    // Method to enroll student in a course
-//    public void enrollInCourse(Course course) {
-//        if (!enrolledCourses.containsKey(course)) {
-//            enrolledCourses.put(course, null); // Initially grade is null
-//            System.out.println("Enrolled in course: " + course.getNameOfCourse());
-//        } else {
-//            System.out.println("Already enrolled in: " + course.getNameOfCourse());
-//        }
-//    }
-
-
     // Method to assign/update grade for a course
     public void assignGradeToCourse(Course course, char grade) {
         if (enrolledCourses.containsKey(course)) {
@@ -82,4 +71,22 @@ public class Student {
             }
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Student student = (Student) obj;
+        return studentId == student.studentId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(studentId);
+    }
+
 }

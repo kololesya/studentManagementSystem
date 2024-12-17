@@ -39,18 +39,25 @@ public class CourseManagement {
         return null;  // Return null if no course with the given ID is found
     }
 
-    // Enroll student in a course
+    // Зачисление студента на курс
     public static void enrollStudent(Student student, Course course) {
-        // Check if the student is enrolled for the course
-        if (student.getEnrolledCourses().containsKey(course)) {
-            throw new IllegalArgumentException("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
+        // Check if a student is enrolled on the course
+        boolean isAlreadyEnrolled = course.getEnrolledStudents().stream()
+                .anyMatch(s -> s.getStudentId() == student.getStudentId());
+
+        if (isAlreadyEnrolled) {
+            System.out.println("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
+            return;  // If they were enrolled, quit
         }
 
-        // Enroll
-        student.getEnrolledCourses().put(course, null); // The initial grade is null
-        System.out.println("Student " + student.getName() + " enrolled in course: " + course.getNameOfCourse());
+        // Проверка, есть ли места на курсе
+        if (course.getEnrolledStudents().size() < course.getMaxCapacity()) {
+            course.getEnrolledStudents().add(student);
+            System.out.println("Student " + student.getName() + " successfully enrolled in course: " + course.getNameOfCourse());
+        } else {
+            System.out.println("Course " + course.getNameOfCourse() + " is full.");
+        }
     }
-
 
     // Assign grade to student for a course
     public static void assignGrade(Student student, Course course, char grade) {
@@ -91,9 +98,14 @@ public class CourseManagement {
                 totalGrades += gradeToPoints(grade);  // Convert grade to points
             }
         }
+        displayAllStudentsGrades();
 
         // Calculate and return the average grade
         return (double) totalGrades / numberOfCourses;
+    }
+
+    public static boolean removeStudentById(int studentId) {
+        return courseList.removeIf(student -> student.getId() == studentId);
     }
 
     public static void displayCourseWithStudents(int courseId) {
@@ -143,10 +155,41 @@ public class CourseManagement {
     }
 
     // Display all students and their overall grades
-    public static void displayAllStudentsGrades() {
+    private static void displayAllStudentsGrades() {
         for (Student student : studentGrades.keySet()) {
             double overallGrade = calculateOverallGrade(student);
             System.out.println(student.getName() + " - Overall Grade: " + overallGrade);
         }
+    }
+
+    public static double calculateOverallGradeForCourse(int courseId) throws CourseNotFoundException {
+        Course course = getCourseById(courseId);
+
+        if (course == null) {
+            throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
+        }
+
+        List<Student> students = course.getEnrolledStudents();
+
+        if (students.isEmpty()) {
+            throw new IllegalStateException("No students enrolled in course: " + course.getNameOfCourse());
+        }
+
+        int totalPoints = 0;
+        int totalGrades = 0;
+
+        for (Student student : students) {
+            Character grade = student.getEnrolledCourses().get(course);
+            if (grade != null) { // Учитываем только студентов с выставленным баллом
+                totalPoints += gradeToPoints(grade);
+                totalGrades++;
+            }
+        }
+
+        if (totalGrades == 0) {
+            throw new IllegalStateException("No grades available for course: " + course.getNameOfCourse());
+        }
+
+        return (double) totalPoints / totalGrades;
     }
 }

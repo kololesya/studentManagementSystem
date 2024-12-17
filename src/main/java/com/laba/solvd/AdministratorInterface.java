@@ -78,12 +78,18 @@ public class AdministratorInterface {
                     enrollStudentInCourse();
                     break;
                 case 3:
+                    removeStudentFromCourse();
+                case 4:
                     assignGradeToStudent();
                     break;
-                case 4:
+                case 5:
                     viewAllCourses();
                     break;
-                case 5:
+                case 6:
+                    calculateCourseOverallGrade();
+                case 7:
+                    displayCourseWithStudents();
+                case 8:
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -104,17 +110,20 @@ public class AdministratorInterface {
         System.out.println("2. Update Student Information");
         System.out.println("3. View Student Details");
         System.out.println("4. View All Students");
-        System.out.println("5. Go Back");
+        System.out.println("5. Calculate Overall Student Grade for All Courses");
+        System.out.println("6. Go Back");
     }
 
     private void displayCourseMenu() {
         System.out.println("\n--- Course Information ---");
         System.out.println("1. Add New Course");
         System.out.println("2. Enroll Student in Course");
-        System.out.println("3. Assign Grade to Student");
-        System.out.println("4. View All Courses");
-        System.out.println("5. Calculate Student Grade");
-        System.out.println("6. Go Back");
+        System.out.println("3. Remove Student from Course");
+        System.out.println("4. Assign Grade to Student");
+        System.out.println("5. View All Courses");
+        System.out.println("6. Calculate Overall Grade for a Course");
+        System.out.println("7. Display a Course with Students");
+        System.out.println("8. Go Back");
     }
 
     private int getIntegerInput() {
@@ -211,8 +220,6 @@ public class AdministratorInterface {
         }
     }
 
-
-
     // Viewing student details by ID
     private void viewStudentDetails() {
         System.out.print("Enter student's ID to view details: ");
@@ -258,7 +265,6 @@ public class AdministratorInterface {
         }
     }
 
-
     // Enrolling student in a course
     private void enrollStudentInCourse() throws CourseNotFoundException {
         System.out.print("Enter student's ID to enroll: ");
@@ -284,7 +290,6 @@ public class AdministratorInterface {
         }
     }
 
-    // Assigning grade to a student in a course
     // Assigning grade to a student in a course
     private void assignGradeToStudent() throws CourseNotFoundException {
         System.out.print("Enter student's ID to assign grade: ");
@@ -345,6 +350,52 @@ public class AdministratorInterface {
             System.out.println("Error: " + e.getMessage());  // Student not enrolled in any courses
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());  // Other unforeseen errors
+        }
+    }
+
+    private void removeStudentFromCourse() {
+        try {
+            System.out.print("Enter course ID: ");
+            int courseId = getIntegerInput();
+
+            System.out.print("Enter student ID: ");
+            int studentId = getIntegerInput();
+
+            Course course = CourseManagement.getCourseById(courseId);
+            if (course == null) {
+                System.out.println("Error: Course not found with ID " + courseId);
+                return;
+            }
+
+            boolean removed = CourseManagement.removeStudentById(studentId);
+            if (removed) {
+                System.out.println("Student with ID " + studentId + " removed from course " + course.getNameOfCourse());
+            } else {
+                System.out.println("Student not found in this course.");
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    }
+
+    private void displayCourseWithStudents(){
+        System.out.print("Enter course ID to view details: ");
+        int courseId = getIntegerInput();
+
+        // Call a method from CourseManagement
+        CourseManagement.displayCourseWithStudents(courseId);
+    }
+    private void calculateCourseOverallGrade() {
+        try {
+            System.out.print("Enter course ID to calculate overall grade: ");
+            int courseId = getIntegerInput();
+
+            double averageGrade = CourseManagement.calculateOverallGradeForCourse(courseId);
+            System.out.printf("The overall average grade for Course ID %d is: %.2f%n", courseId, averageGrade);
+        } catch (CourseNotFoundException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
 

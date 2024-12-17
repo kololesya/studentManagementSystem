@@ -1,5 +1,6 @@
 package com.laba.solvd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,8 +8,8 @@ public class Course {
     private int id;
     private String nameOfCourse;
     private String nameOfProfessor;
-    private int maxCapacity;  // Maximum capacity for students
-    List<Student> enrolledStudents;
+    private int maxCapacity;
+    private List<Student> enrolledStudents;
     private static int totalEnrolledStudents = 0;  // Static variable to track the total number of enrolled students
     // Constructor
     public Course(int id, String nameOfCourse, String nameOfProfessor, int maxCapacity) {
@@ -16,6 +17,7 @@ public class Course {
         this.nameOfCourse = nameOfCourse;
         this.nameOfProfessor = nameOfProfessor;
         this.maxCapacity = maxCapacity;
+        this.enrolledStudents = new ArrayList<>();
     }
 
     public int getId() {
@@ -50,6 +52,11 @@ public class Course {
         this.maxCapacity = maxCapacity;
     }
 
+    public boolean addStudent(Student student) {
+        enrolledStudents.add(student);
+        return true;
+    }
+
     public List<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
@@ -59,15 +66,16 @@ public class Course {
         return totalEnrolledStudents;
     }
 
-    // Method to enroll a student in the course
-    public boolean enrollStudent() {
-        if (totalEnrolledStudents < maxCapacity) {
-            totalEnrolledStudents++;
-            return true;  // Enrollment successful
-        } else {
-            return false;  // Course is full
-        }
-    }
+//    // Method to enroll a student in the course
+//    public boolean enrollStudent(Student student) {
+//        if (totalEnrolledStudents < maxCapacity) {
+//            totalEnrolledStudents++;
+//            enrolledStudents.add(student);  // Добавляем студента в список
+//            return true;  // Enrollment successful
+//        } else {
+//            return false;  // Course is full
+//        }
+//    }
 
     // Method to display course details
     public void displayCourseDetails() {
