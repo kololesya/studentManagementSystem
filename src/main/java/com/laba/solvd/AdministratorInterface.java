@@ -55,6 +55,9 @@ public class AdministratorInterface {
                     viewAllStudents();
                     break;
                 case 5:
+                    calculateStudentGrade();
+                    break;
+                case 6:
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -110,7 +113,8 @@ public class AdministratorInterface {
         System.out.println("2. Enroll Student in Course");
         System.out.println("3. Assign Grade to Student");
         System.out.println("4. View All Courses");
-        System.out.println("5. Go Back");
+        System.out.println("5. Calculate Student Grade");
+        System.out.println("6. Go Back");
     }
 
     private int getIntegerInput() {
@@ -121,40 +125,83 @@ public class AdministratorInterface {
         return scanner.nextInt();
     }
 
-    // Adding a new student
-    private void addNewStudent() {
+    // Method to check if the name is valid (only letters and spaces)
+    private boolean isValidName(String name) {
+        // Regular expression to allow only letters and spaces
+        return name.matches("[a-zA-Z\\s]+");
+    }
+
+    public void addNewStudent() {
         System.out.print("Enter student's ID: ");
-        int id = getIntegerInput();
+        int studentId = getIntegerInput(); // Get student ID as an integer
+        scanner.nextLine(); // Consume the newline left by getIntegerInput()
 
-        System.out.print("Enter student's name: ");
-        String name = scanner.next();
+        String studentName = "";
+        boolean isValidName = false;
 
-        System.out.println("Enter year of birth");
-        int yearOfBirth = getIntegerInput();
+        // Keep prompting for a valid name until it's valid
+        while (!isValidName) {
+            System.out.print("Enter student's name: ");
+            studentName = scanner.nextLine(); // Read full name (including spaces)
 
-        Student newStudent = new Student(id, name, yearOfBirth);
-        studentManagement.addStudent(newStudent);
+            if (isValidName(studentName)) {
+                isValidName = true;
+            } else {
+                System.out.println("Invalid name. Please enter a name containing only letters and spaces.");
+            }
+        }
+
+        System.out.print("Enter year of birth: ");
+        int yearOfBirth = getIntegerInput(); // Get year of birth as an integer
+
+        // Create student and add it to the list
+        Student student = new Student(studentId, studentName, yearOfBirth);
+        studentManagement.addStudent(student);
         System.out.println("Student added successfully!");
     }
 
-    // Updating student information (e.g., name or ID)
     private void updateStudentInformation() {
         try {
+            // Prompt for the student's ID
             System.out.print("Enter student's ID to update: ");
-            int id = getIntegerInput();
+            int studentId = getIntegerInput();  // Get student ID
+            scanner.nextLine();
 
-            // Update student details by calling the method from StudentManagement
-            System.out.print("Enter new name: ");
-            String newName = scanner.next();
+            // Check if the student exists
+            Student student = studentManagement.getStudentById(studentId);
+            if (student == null) {
+                System.out.println("Student not found.");
+                return;
+            }
 
+            // Prompt for the new name, ensuring it's valid
+            String newName = "";
+            boolean isValidName = false;
+
+            // Keep prompting for a valid name until it's valid
+            while (!isValidName) {
+                System.out.print("Enter new name: ");
+                newName = scanner.nextLine();  // Read full name (including spaces)
+
+                if (isValidName(newName)) {
+                    isValidName = true;
+                } else {
+                    System.out.println("Invalid name. Please enter a name containing only letters and spaces.");
+                }
+            }
+
+            // Prompt for the new year of birth and validate it
             System.out.print("Enter new year of birth: ");
             int yearOfBirth = getIntegerInput();
 
-            // Call the update method in StudentManagement
-            boolean success = studentManagement.updateStudent(id, newName, yearOfBirth);
+            // Call the update method in StudentManagement to update the student's details
+            boolean success = studentManagement.updateStudent(studentId, newName, yearOfBirth);
             if (success) {
                 System.out.println("Student information updated successfully!");
+            } else {
+                System.out.println("Failed to update student information.");
             }
+
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());  // For invalid arguments like empty name or future DOB
         } catch (StudentNotFoundException e) {
@@ -163,6 +210,7 @@ public class AdministratorInterface {
             System.out.println("An unexpected error occurred: " + e.getMessage());  // For any other unforeseen errors
         }
     }
+
 
 
     // Viewing student details by ID
@@ -177,22 +225,24 @@ public class AdministratorInterface {
         }
     }
 
-
     // Viewing all students
     private void viewAllStudents() {
         System.out.println("--- All Students ---");
         studentManagement.displayAllStudents();  // Directly calling the displayAllStudents method from StudentManagement
     }
 
-
     // Adding a new course
     private void addNewCourse() {
-        System.out.print("Enter course name: ");
-        String courseName = scanner.next();
-        System.out.print("Enter professor name: ");
-        String professorName = scanner.next();
         System.out.print("Enter course ID: ");
         int courseId = getIntegerInput();
+        scanner.nextLine();  // Consume the newline character left by getIntegerInput()
+
+        System.out.print("Enter course name: ");
+        String courseName = scanner.nextLine();
+
+        System.out.print("Enter professor name: ");
+        String professorName = scanner.nextLine();
+
         System.out.print("Enter maximum capacity: ");
         int maxCapacity = getIntegerInput();
 
@@ -201,9 +251,13 @@ public class AdministratorInterface {
             CourseManagement.addCourse(courseName, professorName, courseId, maxCapacity);
             System.out.println("Course added successfully!");
         } catch (CourseAlreadyExistsException | CourseNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());  // Specific exception handling
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());  // Catch any other exception
+            e.printStackTrace();  // Print stack trace for debugging purposes
         }
     }
+
 
     // Enrolling student in a course
     private void enrollStudentInCourse() throws CourseNotFoundException {
@@ -268,4 +322,30 @@ public class AdministratorInterface {
         System.out.println("--- All Courses ---");
         CourseManagement.displayAllCourses();  // Directly calling the method from CourseManagement to display courses
     }
+
+    private void calculateStudentGrade() {
+        try {
+            // Ask for student ID to calculate the grade
+            System.out.print("Enter student's ID to calculate overall grade: ");
+            int studentId = getIntegerInput();  // Get student ID as input
+
+            // Retrieve the student by ID (assuming you have a method in StudentManagement)
+            Student student = studentManagement.getStudentById(studentId);
+
+            if (student == null) {
+                System.out.println("Student not found with ID " + studentId);
+                return;
+            }
+
+            // Call the calculateOverallGrade method from CourseManagement to calculate the grade
+            double overallGrade = CourseManagement.calculateOverallGrade(student);
+            System.out.println("Overall grade for student " + student.getName() + ": " + overallGrade);
+
+        } catch (StudentNotEnrolledException e) {
+            System.out.println("Error: " + e.getMessage());  // Student not enrolled in any courses
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());  // Other unforeseen errors
+        }
+    }
+
 }

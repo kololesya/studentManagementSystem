@@ -1,5 +1,6 @@
 package com.laba.solvd;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Course {
@@ -7,6 +8,7 @@ public class Course {
     private String nameOfCourse;
     private String nameOfProfessor;
     private int maxCapacity;  // Maximum capacity for students
+    List<Student> enrolledStudents;
     private static int totalEnrolledStudents = 0;  // Static variable to track the total number of enrolled students
     // Constructor
     public Course(int id, String nameOfCourse, String nameOfProfessor, int maxCapacity) {
@@ -46,6 +48,10 @@ public class Course {
 
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
+    }
+
+    public List<Student> getEnrolledStudents() {
+        return enrolledStudents;
     }
 
     // Static method to get the total number of enrolled students across all courses

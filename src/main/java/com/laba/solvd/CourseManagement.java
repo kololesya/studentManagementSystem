@@ -16,24 +16,27 @@ public class CourseManagement {
 
     // Add new course
     public static void addCourse(String courseName, String professorName, int courseId, int maxCapacity) throws CourseNotFoundException {
+        // Create a new course object
         Course course = new Course(courseId, courseName, professorName, maxCapacity);
 
+        // Check if a course with the same ID already exists
         if (getCourseById(courseId) != null) {
             throw new CourseAlreadyExistsException("Course with ID " + courseId + " already exists: " + courseName);
+        } else {
+            // Add the course to the course list
+            courseList.add(course);
+            System.out.println("Course added: " + courseName);
         }
-
-        courseList.add(course);
-        System.out.println("Course added: " + courseName);
     }
 
-    public static Course getCourseById(int courseId) throws CourseNotFoundException {
+    public static Course getCourseById(int courseId) {
+        // Iterate through the course list to find a course with the given ID
         for (Course course : courseList) {
             if (course.getId() == courseId) {
-                return course;
+                return course;  // Return the course if it exists
             }
         }
-        // Throw CourseNotFoundException if the course is not found
-        throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
+        return null;  // Return null if no course with the given ID is found
     }
 
     // Enroll student in a course
@@ -91,6 +94,28 @@ public class CourseManagement {
 
         // Calculate and return the average grade
         return (double) totalGrades / numberOfCourses;
+    }
+
+    public static void displayCourseWithStudents(int courseId) {
+        Course course = getCourseById(courseId);
+        if (course == null) {
+            System.out.println("Course not found with ID " + courseId);
+            return;
+        }
+
+        System.out.println("Course Name: " + course.getNameOfCourse());
+        System.out.println("Professor: " + course.getNameOfProfessor());
+        System.out.println("Max Capacity: " + course.getMaxCapacity());
+        System.out.println("Enrolled Students:");
+
+        List<Student> students = course.getEnrolledStudents();
+        if (students.isEmpty()) {
+            System.out.println("No students enrolled in this course.");
+        } else {
+            for (Student student : students) {
+                System.out.println("Student ID: " + student.getStudentId() + ", Name: " + student.getName());
+            }
+        }
     }
 
     // Convert letter grade to numeric points (A=4, B=3, C=2, D=1, F=0)
