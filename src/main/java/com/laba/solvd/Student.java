@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class Student {
     private String name;
-    private String studentId;
+    private int studentId;
     private int dateOfBirth;
     private Map<Course, Character> enrolledCourses; // Course as key, Grade as value
 
-    public Student(String name, String studentId, int dateOfBirth) {
-        this.name = name;
+    public Student(int studentId, String name, int dateOfBirth) {
         this.studentId = studentId;
+        this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.enrolledCourses = new HashMap<>();
     }
@@ -25,11 +25,11 @@ public class Student {
         this.name = name;
     }
 
-    public String getStudentId() {
+    public int getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(String studentId) {
+    public void setStudentId(int studentId) {
         this.studentId = studentId;
     }
 
@@ -45,15 +45,16 @@ public class Student {
         return enrolledCourses;
     }
 
-    // Method to enroll student in a course
-    public void enrollInCourse(Course course) {
-        if (!enrolledCourses.containsKey(course)) {
-            enrolledCourses.put(course, null); // Initially grade is null
-            System.out.println("Enrolled in course: " + course.getNameOfCourse());
-        } else {
-            System.out.println("Already enrolled in: " + course.getNameOfCourse());
-        }
-    }
+//    // Method to enroll student in a course
+//    public void enrollInCourse(Course course) {
+//        if (!enrolledCourses.containsKey(course)) {
+//            enrolledCourses.put(course, null); // Initially grade is null
+//            System.out.println("Enrolled in course: " + course.getNameOfCourse());
+//        } else {
+//            System.out.println("Already enrolled in: " + course.getNameOfCourse());
+//        }
+//    }
+
 
     // Method to assign/update grade for a course
     public void assignGradeToCourse(Course course, char grade) {

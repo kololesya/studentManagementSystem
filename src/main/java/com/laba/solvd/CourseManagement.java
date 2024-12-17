@@ -38,13 +38,16 @@ public class CourseManagement {
 
     // Enroll student in a course
     public static void enrollStudent(Student student, Course course) {
+        // Check if the student is enrolled for the course
         if (student.getEnrolledCourses().containsKey(course)) {
             throw new IllegalArgumentException("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
         }
 
-        student.enrollInCourse(course);
+        // Enroll
+        student.getEnrolledCourses().put(course, null); // The initial grade is null
         System.out.println("Student " + student.getName() + " enrolled in course: " + course.getNameOfCourse());
     }
+
 
     // Assign grade to student for a course
     public static void assignGrade(Student student, Course course, char grade) {

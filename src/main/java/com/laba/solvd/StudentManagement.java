@@ -13,6 +13,15 @@ public class StudentManagement {
         this.studentList = new ArrayList<>();
     }
 
+    public Student getStudentById(int id) {
+        for (Student student : studentList) {
+            if (student.getStudentId() == id) {
+                return student;
+            }
+        }
+        return null;  // Return null if no student with the given ID is found
+    }
+
     // Add a new student
     public void addStudent(Student student) {
         if (student == null) {
@@ -22,8 +31,8 @@ public class StudentManagement {
         if (student.getName() == null || student.getName().isEmpty()) {
             throw new IllegalArgumentException("Student name cannot be empty.");
         }
-        if (student.getStudentId() == null || student.getStudentId().isEmpty()) {
-            throw new IllegalArgumentException("Student ID cannot be empty.");
+        if (student.getStudentId() == 0 ) {
+            throw new IllegalArgumentException("Student ID cannot be 0.");
         }
         if (student.getDateOfBirth() <= 0) {
             throw new IllegalArgumentException("Date of Birth must be a positive integer.");
@@ -35,9 +44,9 @@ public class StudentManagement {
     }
 
     // Update student details
-    public boolean updateStudent(String studentId, String name, int dateOfBirth) {
+    public boolean updateStudent(int studentId, String name, int dateOfBirth) {
         for (Student student : studentList) {
-            if (student.getStudentId().equals(studentId)) {
+            if (student.getStudentId() == studentId) {
                 // Update the name
                 if (name != null && !name.trim().isEmpty()) {
                     student.setName(name);
@@ -67,9 +76,9 @@ public class StudentManagement {
     }
 
     // Get a student by ID
-    public Student getStudent(String studentId) {
+    public Student getStudent(int studentId) {
         for (Student student : studentList) {
-            if (student.getStudentId().equals(studentId)) {
+            if (student.getStudentId() == studentId) {
                 return student;
             }
         }
