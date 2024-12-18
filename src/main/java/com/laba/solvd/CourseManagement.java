@@ -39,23 +39,21 @@ public class CourseManagement {
         return null;  // Return null if no course with the given ID is found
     }
 
-    // Зачисление студента на курс
+    // Add a student on a course
     public static void enrollStudent(Student student, Course course) {
-        // Check if a student is enrolled on the course
+        // Check if the student is already enrolled
         boolean isAlreadyEnrolled = course.getEnrolledStudents().stream()
                 .anyMatch(s -> s.getStudentId() == student.getStudentId());
 
         if (isAlreadyEnrolled) {
             System.out.println("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
-            return;  // If they were enrolled, quit
-        }
-
-        // Проверка, есть ли места на курсе
-        if (course.getEnrolledStudents().size() < course.getMaxCapacity()) {
-            course.getEnrolledStudents().add(student);
-            System.out.println("Student " + student.getName() + " successfully enrolled in course: " + course.getNameOfCourse());
         } else {
-            System.out.println("Course " + course.getNameOfCourse() + " is full.");
+            if (course.getEnrolledStudents().size() < course.getMaxCapacity()) {
+                course.getEnrolledStudents().add(student);
+                System.out.println("Student " + student.getName() + " successfully enrolled in course: " + course.getNameOfCourse());
+            } else {
+                System.out.println("Course " + course.getNameOfCourse() + " is full.");
+            }
         }
     }
 
@@ -115,17 +113,14 @@ public class CourseManagement {
             return;
         }
 
-        System.out.println("Course Name: " + course.getNameOfCourse());
-        System.out.println("Professor: " + course.getNameOfProfessor());
-        System.out.println("Max Capacity: " + course.getMaxCapacity());
-        System.out.println("Enrolled Students:");
+        System.out.println(course.toString());
 
         List<Student> students = course.getEnrolledStudents();
         if (students.isEmpty()) {
             System.out.println("No students enrolled in this course.");
         } else {
             for (Student student : students) {
-                System.out.println("Student ID: " + student.getStudentId() + ", Name: " + student.getName());
+                System.out.println("Student ID: " + student.getStudentId() + ", Name: " + student.getName() + ", Grade: ");
             }
         }
     }

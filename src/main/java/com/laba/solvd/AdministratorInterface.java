@@ -281,7 +281,6 @@ public class AdministratorInterface {
             try {
                 // Use the method enrollStudent
                 CourseManagement.enrollStudent(student, course);
-                System.out.println("Student enrolled in course successfully!");
             } catch (IllegalArgumentException e) {
                 System.out.println("Error: " + e.getMessage());
             }

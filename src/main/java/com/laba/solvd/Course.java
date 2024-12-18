@@ -10,7 +10,7 @@ public class Course {
     private String nameOfProfessor;
     private int maxCapacity;
     private List<Student> enrolledStudents;
-    private static int totalEnrolledStudents = 0;  // Static variable to track the total number of enrolled students
+    private static int totalEnrolledStudents;  // Static variable to track the total number of enrolled students
     // Constructor
     public Course(int id, String nameOfCourse, String nameOfProfessor, int maxCapacity) {
         this.id = id;
@@ -52,11 +52,6 @@ public class Course {
         this.maxCapacity = maxCapacity;
     }
 
-    public boolean addStudent(Student student) {
-        enrolledStudents.add(student);
-        return true;
-    }
-
     public List<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
@@ -66,29 +61,21 @@ public class Course {
         return totalEnrolledStudents;
     }
 
-//    // Method to enroll a student in the course
-//    public boolean enrollStudent(Student student) {
-//        if (totalEnrolledStudents < maxCapacity) {
-//            totalEnrolledStudents++;
-//            enrolledStudents.add(student);  // Добавляем студента в список
-//            return true;  // Enrollment successful
-//        } else {
-//            return false;  // Course is full
-//        }
-//    }
-
-    // Method to display course details
-    public void displayCourseDetails() {
-        System.out.println("Course Code: " + id);
-        System.out.println("Course Name: " + nameOfCourse);
-        System.out.println("Professor: " + nameOfProfessor);
-        System.out.println("Max Capacity: " + maxCapacity);
-        System.out.println("Total Enrolled Students: " + totalEnrolledStudents);
+    public boolean addStudent(Student student) {
+        // Check if there is space in the course
+        if (enrolledStudents.size() < maxCapacity) {
+            enrolledStudents.add(student);
+            totalEnrolledStudents++;  // Increment the total enrolled students across all courses
+            return true;  // Student added successfully
+        } else {
+            System.out.println("Course is full, cannot add student " + student.getName());
+            return false;  // Return false if course is full
+        }
     }
 
     @Override
     public String toString() {
-        return "Course ID: " + id + ", Name: " + nameOfCourse + ", Professor: " + nameOfProfessor;
+        return "Course ID: " + id + ", Name: " + nameOfCourse + ", Professor: " + nameOfProfessor + "Total students: " + totalEnrolledStudents;
     }
 
     @Override
