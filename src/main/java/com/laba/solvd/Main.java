@@ -7,8 +7,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws CourseNotFoundException {
 
-        Scanner scanner = new Scanner(System.in);  // Create an object for input data
-        AdministratorInterface adminInterface = new AdministratorInterface(scanner);  //create an admin interface
-        adminInterface.run();  // Run program
+        // Create an object for input data
+        Scanner scanner = new Scanner(System.in);
+        //create an admin interface
+        AdministratorInterface adminInterface = new AdministratorInterface(scanner);
+        // Run program
+        adminInterface.run();
     }
 }
