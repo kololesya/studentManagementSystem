@@ -20,6 +20,10 @@ public class Course {
         this.enrolledStudents = new ArrayList<>();
     }
 
+    public Course() {
+
+    }
+
     public int getId() {
         return id;
     }
@@ -61,17 +65,10 @@ public class Course {
         return totalEnrolledStudents;
     }
 
-    public boolean addStudent(Student student) {
+    public int addStudent(Student student) {
         // Check if there is space in the course
-        if (enrolledStudents.size() < maxCapacity) {
-            enrolledStudents.add(student);
-            totalEnrolledStudents++;  // Increment total enrolled students across all courses
-            System.out.println("Student " + student.getName() + " successfully enrolled.");
-            return true;  // Student added successfully
-        } else {
-            System.out.println("Course is full, cannot add student " + student.getName());
-            return false;  // Return false if course is full
-        }
+        enrolledStudents.add(student);
+        return totalEnrolledStudents++;
     }
 
     @Override

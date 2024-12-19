@@ -49,7 +49,7 @@ public class CourseManagement {
             System.out.println("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
         } else {
             if (course.getEnrolledStudents().size() < course.getMaxCapacity()) {
-                course.getEnrolledStudents().add(student);
+                course.addStudent(student);
                 System.out.println("Student " + student.getName() + " successfully enrolled in course: " + course.getNameOfCourse());
             } else {
                 System.out.println("Course " + course.getNameOfCourse() + " is full.");
@@ -175,7 +175,7 @@ public class CourseManagement {
 
         for (Student student : students) {
             Character grade = student.getEnrolledCourses().get(course);
-            if (grade != null) { // Учитываем только студентов с выставленным баллом
+            if (grade != null) { // Take only students with grades
                 totalPoints += gradeToPoints(grade);
                 totalGrades++;
             }
