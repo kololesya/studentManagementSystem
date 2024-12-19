@@ -368,7 +368,7 @@ public class AdministratorInterface {
                 return;
             }
 
-            boolean removed = CourseManagement.removeStudentById(studentId);
+            boolean removed = CourseManagement.removeStudentFromCourse(studentId, courseId);
             if (removed) {
                 System.out.println("Student with ID " + studentId + " removed from course " + course.getNameOfCourse());
             } else {
@@ -376,10 +376,12 @@ public class AdministratorInterface {
             }
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
+        } catch (CourseNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void displayCourseWithStudents(){
+    private void displayCourseWithStudents() throws CourseNotFoundException {
         System.out.print("Enter course ID to view details: ");
         int courseId = getIntegerInput();
 
