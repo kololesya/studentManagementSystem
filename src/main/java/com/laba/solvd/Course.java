@@ -65,7 +65,8 @@ public class Course {
         // Check if there is space in the course
         if (enrolledStudents.size() < maxCapacity) {
             enrolledStudents.add(student);
-            totalEnrolledStudents++;  // Increment the total enrolled students across all courses
+            totalEnrolledStudents++;  // Increment total enrolled students across all courses
+            System.out.println("Student " + student.getName() + " successfully enrolled.");
             return true;  // Student added successfully
         } else {
             System.out.println("Course is full, cannot add student " + student.getName());
@@ -75,7 +76,9 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Course ID: " + id + ", Name: " + nameOfCourse + ", Professor: " + nameOfProfessor + "Total students: " + totalEnrolledStudents;
+        return "Course ID: " + id + ", Name: " + nameOfCourse + ", Professor: " +
+                nameOfProfessor + ", Enrolled students: " + enrolledStudents.size() + "/" + maxCapacity +
+                " Total students: " + totalEnrolledStudents;
     }
 
     @Override

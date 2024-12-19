@@ -87,8 +87,10 @@ public class AdministratorInterface {
                     break;
                 case 6:
                     calculateCourseOverallGrade();
+                    break;
                 case 7:
                     displayCourseWithStudents();
+                    break;
                 case 8:
                     return;
                 default:
