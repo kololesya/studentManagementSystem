@@ -66,7 +66,6 @@ public class Course {
     }
 
     public int addStudent(Student student) {
-        // Check if there is space in the course
         enrolledStudents.add(student);
         return totalEnrolledStudents++;
     }

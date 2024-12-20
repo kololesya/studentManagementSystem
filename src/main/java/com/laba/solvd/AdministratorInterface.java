@@ -19,7 +19,7 @@ public class AdministratorInterface {
         while (true) {
             displayMainMenu();
             System.out.println("Choose an option: ");
-            int choice = getIntegerInput();
+            int choice = getPositiveIntegerInput();
             switch (choice) {
                 case 1:
                     handleStudentMenu();
@@ -40,7 +40,7 @@ public class AdministratorInterface {
         while (true) {
             displayStudentMenu();
             System.out.println("Enter your choice: ");
-            int choice = getIntegerInput();
+            int choice = getPositiveIntegerInput();
             switch (choice) {
                 case 1:
                     addNewStudent();
@@ -69,7 +69,7 @@ public class AdministratorInterface {
         while (true) {
             displayCourseMenu();
             System.out.println("Enter your choice: ");
-            int choice = getIntegerInput();
+            int choice = getPositiveIntegerInput();
             switch (choice) {
                 case 1:
                     addNewCourse();
@@ -128,12 +128,21 @@ public class AdministratorInterface {
         System.out.println("8. Go Back");
     }
 
-    private int getIntegerInput() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("Invalid input. Please enter a valid number.");
-            scanner.next();  // Clear the invalid input
+    private int getPositiveIntegerInput() {
+        while (true) {
+            if (scanner.hasNextInt()) {
+                int input = scanner.nextInt();
+                if (input > 0) {
+                    scanner.nextLine(); // Consume newline
+                    return input;
+                } else {
+                    System.out.println("Invalid input. Please enter a positive integer.");
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                scanner.next(); // Consume non-integer input
+            }
         }
-        return scanner.nextInt();
     }
 
     // Method to check if the name is valid (only letters and spaces)
@@ -144,7 +153,7 @@ public class AdministratorInterface {
 
     public void addNewStudent() {
         System.out.print("Enter student's ID: ");
-        int studentId = getIntegerInput(); // Get student ID as an integer
+        int studentId = getPositiveIntegerInput(); // Get student ID as an integer
         scanner.nextLine(); // Consume the newline left by getIntegerInput()
 
         String studentName = "";
@@ -163,7 +172,7 @@ public class AdministratorInterface {
         }
 
         System.out.print("Enter year of birth: ");
-        int yearOfBirth = getIntegerInput(); // Get year of birth as an integer
+        int yearOfBirth = getPositiveIntegerInput(); // Get year of birth as an integer
 
         // Create student and add it to the list
         Student student = new Student(studentId, studentName, yearOfBirth);
@@ -175,8 +184,7 @@ public class AdministratorInterface {
         try {
             // Prompt for the student's ID
             System.out.print("Enter student's ID to update: ");
-            int studentId = getIntegerInput();  // Get student ID
-            scanner.nextLine();
+            int studentId = getPositiveIntegerInput();  // Get student ID
 
             // Check if the student exists
             Student student = studentManagement.getStudentById(studentId);
@@ -203,7 +211,7 @@ public class AdministratorInterface {
 
             // Prompt for the new year of birth and validate it
             System.out.print("Enter new year of birth: ");
-            int yearOfBirth = getIntegerInput();
+            int yearOfBirth = getPositiveIntegerInput();
 
             // Call the update method in StudentManagement to update the student's details
             boolean success = studentManagement.updateStudent(studentId, newName, yearOfBirth);
@@ -225,7 +233,7 @@ public class AdministratorInterface {
     // Viewing student details by ID
     private void viewStudentDetails() {
         System.out.print("Enter student's ID to view details: ");
-        int id = getIntegerInput();
+        int id = getPositiveIntegerInput();
         Student student = studentManagement.getStudentById(id);
         if (student != null) {
             student.displayDetails();  // Directly calling displayDetails method from Student class
@@ -243,17 +251,28 @@ public class AdministratorInterface {
     // Adding a new course
     private void addNewCourse() {
         System.out.print("Enter course ID: ");
-        int courseId = getIntegerInput();
-        scanner.nextLine();  // Consume the newline character left by getIntegerInput()
+        int courseId = getPositiveIntegerInput();
 
         System.out.print("Enter course name: ");
         String courseName = scanner.nextLine();
 
-        System.out.print("Enter professor name: ");
-        String professorName = scanner.nextLine();
+        String professorName = "";
+        boolean isValidName = false;
+
+        // Keep prompting for a valid name until it's valid
+        while (!isValidName) {
+            System.out.print("Enter professor's name: ");
+            professorName = scanner.nextLine();  // Read full name (including spaces)
+
+            if (isValidName(professorName)) {
+                isValidName = true;
+            } else {
+                System.out.println("Invalid name. Please enter a name containing only letters and spaces.");
+            }
+        }
 
         System.out.print("Enter maximum capacity: ");
-        int maxCapacity = getIntegerInput();
+        int maxCapacity = getPositiveIntegerInput();
 
         try {
             // Call the static addCourse method from CourseManagement to add the course
@@ -270,9 +289,9 @@ public class AdministratorInterface {
     // Enrolling student in a course
     private void enrollStudentInCourse() throws CourseNotFoundException {
         System.out.print("Enter student's ID to enroll: ");
-        int studentId = getIntegerInput();
+        int studentId = getPositiveIntegerInput();
         System.out.print("Enter course code to enroll in: ");
-        int courseCode = getIntegerInput();
+        int courseCode = getPositiveIntegerInput();
 
         // Retrieve the student by id
         Student student = studentManagement.getStudentById(studentId);
@@ -294,9 +313,9 @@ public class AdministratorInterface {
     // Assigning grade to a student in a course
     private void assignGradeToStudent() throws CourseNotFoundException {
         System.out.print("Enter student's ID to assign grade: ");
-        int studentId = getIntegerInput();  // Get student ID
+        int studentId = getPositiveIntegerInput();  // Get student ID
         System.out.print("Enter course ID: ");
-        int courseId = getIntegerInput();  // Get course ID as an integer
+        int courseId = getPositiveIntegerInput();  // Get course ID as an integer
         System.out.print("Enter grade (A, B, C, D, F): ");
         String gradeInput = scanner.next().toUpperCase();  // Get grade and convert to uppercase
 
@@ -333,7 +352,7 @@ public class AdministratorInterface {
         try {
             // Ask for student ID to calculate the grade
             System.out.print("Enter student's ID to calculate overall grade: ");
-            int studentId = getIntegerInput();  // Get student ID as input
+            int studentId = getPositiveIntegerInput();  // Get student ID as input
 
             // Retrieve the student by ID (assuming you have a method in StudentManagement)
             Student student = studentManagement.getStudentById(studentId);
@@ -357,10 +376,10 @@ public class AdministratorInterface {
     private void removeStudentFromCourse() {
         try {
             System.out.print("Enter course ID: ");
-            int courseId = getIntegerInput();
+            int courseId = getPositiveIntegerInput();
 
             System.out.print("Enter student ID: ");
-            int studentId = getIntegerInput();
+            int studentId = getPositiveIntegerInput();
 
             Course course = CourseManagement.getCourseById(courseId);
             if (course == null) {
@@ -383,7 +402,7 @@ public class AdministratorInterface {
 
     private void displayCourseWithStudents() throws CourseNotFoundException {
         System.out.print("Enter course ID to view details: ");
-        int courseId = getIntegerInput();
+        int courseId = getPositiveIntegerInput();
 
         // Call a method from CourseManagement
         CourseManagement.displayCourseWithStudents(courseId);
@@ -391,7 +410,7 @@ public class AdministratorInterface {
     private void calculateCourseOverallGrade() {
         try {
             System.out.print("Enter course ID to calculate overall grade: ");
-            int courseId = getIntegerInput();
+            int courseId = getPositiveIntegerInput();
 
             double averageGrade = CourseManagement.calculateOverallGradeForCourse(courseId);
             System.out.printf("The overall average grade for Course ID %d is: %.2f%n", courseId, averageGrade);

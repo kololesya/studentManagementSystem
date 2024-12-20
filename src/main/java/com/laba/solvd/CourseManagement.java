@@ -19,6 +19,9 @@ public class CourseManagement {
         // Create a new course object
         Course course = new Course(courseId, courseName, professorName, maxCapacity);
 
+        if (courseId <= 0) {
+            throw new IllegalArgumentException("Course ID must be a positive integer.");
+        }
         // Check if a course with the same ID already exists
         if (getCourseById(courseId) != null) {
             throw new CourseAlreadyExistsException("Course with ID " + courseId + " already exists: " + courseName);
@@ -29,14 +32,14 @@ public class CourseManagement {
         }
     }
 
-    public static Course getCourseById(int courseId) throws CourseNotFoundException {
+    public static Course getCourseById(int courseId) {
         // Iterate through the course list to find a course with the given ID
         for (Course course : courseList) {
             if (course.getId() == courseId) {
                 return course;  // Return the course if it exists
             }
         }
-        throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
+        return null;  // Return null if no course with the given ID is found
     }
 
     // Add a student on a course
@@ -118,26 +121,27 @@ public class CourseManagement {
         return removed;
     }
 
-    // Display details of a course along with its enrolled students
-    public static void displayCourseWithStudents(int courseId) {
-        try {
-            Course course = getCourseById(courseId);
-            System.out.println(course.toString());
 
-            List<Student> students = course.getEnrolledStudents();
-            if (students.isEmpty()) {
-                System.out.println("No students enrolled in this course.");
-            } else {
-                for (Student student : students) {
-                    System.out.println("Student ID: " + student.getStudentId() + ", Name: " + student.getName() + ", Grade: " + student.getEnrolledCourses().get(course));
-                }
+    public static void displayCourseWithStudents(int courseId) {
+        Course course = getCourseById(courseId);
+        if (course == null) {
+            System.out.println("Course not found with ID " + courseId);
+            return;
+        }
+
+        System.out.println(course.toString());
+
+        List<Student> students = course.getEnrolledStudents();
+        if (students.isEmpty()) {
+            System.out.println("No students enrolled in this course.");
+        } else {
+            for (Student student : students) {
+                System.out.println("Student ID: " + student.getStudentId() + ", Name: " + student.getName() + ", Grade: ");
             }
-        } catch (CourseNotFoundException e) {
-            System.out.println(e.getMessage());
         }
     }
 
-    // Convert a letter grade to numeric points (A=4, B=3, C=2, D=1, F=0)
+    // Convert letter grade to numeric points (A=4, B=3, C=2, D=1, F=0)
     private static int gradeToPoints(char grade) {
         switch (grade) {
             case 'A': return 4;
@@ -149,7 +153,7 @@ public class CourseManagement {
         }
     }
 
-    // Display all available courses
+    // Display all courses
     public static void displayAllCourses() {
         if (courseList.isEmpty()) {
             System.out.println("No courses available.");
@@ -169,9 +173,12 @@ public class CourseManagement {
         }
     }
 
-    // Calculate the overall grade for a specific course based on its enrolled students
     public static double calculateOverallGradeForCourse(int courseId) throws CourseNotFoundException {
         Course course = getCourseById(courseId);
+
+        if (course == null) {
+            throw new CourseNotFoundException("Course with ID " + courseId + " not found.");
+        }
 
         List<Student> students = course.getEnrolledStudents();
 
@@ -182,10 +189,9 @@ public class CourseManagement {
         int totalPoints = 0;
         int totalGrades = 0;
 
-        // Calculate total points and grades for students with valid grades
         for (Student student : students) {
             Character grade = student.getEnrolledCourses().get(course);
-            if (grade != null) { // Include only students with grades
+            if (grade != null) { // Take only students with grades
                 totalPoints += gradeToPoints(grade);
                 totalGrades++;
             }
@@ -195,7 +201,6 @@ public class CourseManagement {
             throw new IllegalStateException("No grades available for course: " + course.getNameOfCourse());
         }
 
-        // Return the average grade for the course
         return (double) totalPoints / totalGrades;
     }
 }
