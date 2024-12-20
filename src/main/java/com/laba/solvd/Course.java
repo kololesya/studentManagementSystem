@@ -1,8 +1,6 @@
 package com.laba.solvd;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Course {
     private int id;
@@ -10,6 +8,7 @@ public class Course {
     private String nameOfProfessor;
     private int maxCapacity;
     private List<Student> enrolledStudents;
+    private Map<Student, Character> studentGrades = new HashMap<>(); // Хранение оценок студентов
     private static int totalEnrolledStudents;  // Static variable to track the total number of enrolled students
     // Constructor
     public Course(int id, String nameOfCourse, String nameOfProfessor, int maxCapacity) {
@@ -18,10 +17,6 @@ public class Course {
         this.nameOfProfessor = nameOfProfessor;
         this.maxCapacity = maxCapacity;
         this.enrolledStudents = new ArrayList<>();
-    }
-
-    public Course() {
-
     }
 
     public int getId() {
@@ -40,7 +35,7 @@ public class Course {
         this.nameOfCourse = nameOfCourse;
     }
 
-    public String getNameOfProfessor() {
+    public String getProfessorName() {
         return nameOfProfessor;
     }
 
@@ -60,6 +55,10 @@ public class Course {
         return enrolledStudents;
     }
 
+    public Map<Student, Character> getStudentGrades() {
+        return studentGrades;
+    }
+
     // Static method to get the total number of enrolled students across all courses
     public static int getTotalEnrolledStudents() {
         return totalEnrolledStudents;
@@ -68,6 +67,14 @@ public class Course {
     public int addStudent(Student student) {
         enrolledStudents.add(student);
         return totalEnrolledStudents++;
+    }
+
+    public void assignGradeToStudent(Student student, char grade) {
+        studentGrades.put(student, grade);
+    }
+
+    public void displayDetails(){
+        System.out.println("All student's grades: " + studentGrades);
     }
 
     @Override

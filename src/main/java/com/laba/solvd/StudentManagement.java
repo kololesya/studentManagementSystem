@@ -71,8 +71,7 @@ public class StudentManagement {
     private boolean isValidDateOfBirth(int dateOfBirth) {
         // The date of birth can't be o and can't be in the future
         int currentYear = java.time.LocalDate.now().getYear();
-        int birthYear = dateOfBirth;
-        return birthYear > 0 && birthYear <= currentYear;
+        return dateOfBirth > 0 && dateOfBirth <= currentYear;
     }
 
     // Get a student by ID

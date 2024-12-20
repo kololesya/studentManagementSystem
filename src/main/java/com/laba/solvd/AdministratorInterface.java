@@ -154,7 +154,6 @@ public class AdministratorInterface {
     public void addNewStudent() {
         System.out.print("Enter student's ID: ");
         int studentId = getPositiveIntegerInput(); // Get student ID as an integer
-        scanner.nextLine(); // Consume the newline left by getIntegerInput()
 
         String studentName = "";
         boolean isValidName = false;
@@ -237,6 +236,7 @@ public class AdministratorInterface {
         Student student = studentManagement.getStudentById(id);
         if (student != null) {
             student.displayDetails();  // Directly calling displayDetails method from Student class
+            courseManagement.displayDetails();
         } else {
             System.out.println("Student not found.");
         }
@@ -363,7 +363,7 @@ public class AdministratorInterface {
             }
 
             // Call the calculateOverallGrade method from CourseManagement to calculate the grade
-            double overallGrade = CourseManagement.calculateOverallGrade(student);
+            double overallGrade = CourseManagement.calculateOverallGradeForStudent(student);
             System.out.println("Overall grade for student " + student.getName() + ": " + overallGrade);
 
         } catch (StudentNotEnrolledException e) {
@@ -420,5 +420,4 @@ public class AdministratorInterface {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
-
 }
