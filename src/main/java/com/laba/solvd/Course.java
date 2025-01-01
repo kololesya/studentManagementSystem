@@ -78,10 +78,6 @@ public class Course {
         studentGrades.put(student, grade);
     }
 
-    public void displayDetails(){
-        System.out.println("All student's grades: " + studentGrades);
-    }
-
     @Override
     public String toString() {
         return "Course ID: " + id + ", Name: " + nameOfCourse + ", Professor: " +

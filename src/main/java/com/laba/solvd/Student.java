@@ -40,11 +40,12 @@ public class Student {
         this.dateOfBirth = dateOfBirth;
     }
 
-    // Display student details including courses and grades
-    public void displayDetails() {
-        System.out.println("Student Name: " + name);
-        System.out.println("Student ID: " + studentId);
-        System.out.println("Date of Birth: " + dateOfBirth);
+    @Override
+    public String toString() {
+        return "Student: " +
+                "name: " + name +
+                ", student id: " + studentId +
+                ", year of birth: " + dateOfBirth;
     }
 
     @Override

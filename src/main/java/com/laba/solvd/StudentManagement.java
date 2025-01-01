@@ -85,16 +85,15 @@ public class StudentManagement {
     }
 
     // Display all students
-    public void displayAllStudents() {
+    public String displayAllStudents() {
         if (studentList.isEmpty()) {
-            System.out.println("No students found.");
-            return;
+            return "No students found.";
         }
-        System.out.println("Student List:");
+
         for (Student student : studentList) {
-            student.displayDetails();
-            System.out.println("---------------------------");
+            return student.toString();
         }
+        return "Student List:";
     }
 
     // Get total student count

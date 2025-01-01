@@ -236,7 +236,7 @@ public class AdministratorInterface {
         int id = getPositiveIntegerInput();
         Student student = studentManagement.getStudentById(id);
         if (student != null) {
-            student.displayDetails();  // Directly calling displayDetails method from Student class
+            System.out.println(student.toString());  // Directly calling displayDetails method from Student class
             courseManagement.displayDetails(student);
         } else {
             System.out.println("Student not found.");

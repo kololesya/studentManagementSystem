@@ -61,8 +61,8 @@ public class AdministratorInterfaceGUI extends Application {
         // For button "Add New Student"
         addStudentButton.setOnAction(event -> addNewStudent(outputArea));  // outputArea as a parametr
 
-        updateStudentButton.setOnAction(event -> updateStudentInformation());
-        viewStudentButton.setOnAction(event -> viewStudentDetails());
+        updateStudentButton.setOnAction(event -> updateStudentInformation(outputArea));
+        viewStudentButton.setOnAction(event -> viewStudentDetails(outputArea));
         backButton.setOnAction(event -> studentMenuStage.close());
 
         VBox studentMenuButtons = new VBox(20);
@@ -165,17 +165,107 @@ public class AdministratorInterfaceGUI extends Application {
         });
     }
 
+    private void updateStudentInformation(TextArea outputArea) {
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Update Student Information");
+        idDialog.setHeaderText("Search for Student");
+        idDialog.setContentText("Enter Student ID:");
 
+        idDialog.showAndWait().ifPresent(id -> {
+            try {
+                int studentId = Integer.parseInt(id);
+                Student student = studentManagement.getStudent(studentId);
 
-    // Update student information
-    private void updateStudentInformation() {
-        // Logic for updating student information
+                if (student == null) {
+                    outputArea.appendText("No student found with ID: " + studentId + "\n");
+                    return;
+                }
+
+                // Show current student details
+                outputArea.appendText("Updating information for: " + student.toString() + "\n");
+
+                // Update name
+                TextInputDialog nameDialog = new TextInputDialog(student.getName());
+                nameDialog.setTitle("Update Student Name");
+                nameDialog.setHeaderText("Current Name: " + student.getName());
+                nameDialog.setContentText("Enter new name:");
+
+                nameDialog.showAndWait().ifPresent(newName -> {
+                    if (!newName.matches("[a-zA-Z\\s]+")) {
+                        outputArea.appendText("Invalid name format. Only Latin letters are allowed.\n");
+                        return;
+                    }
+                    student.setName(newName);
+                });
+
+                // Update year of birth
+                TextInputDialog yearDialog = new TextInputDialog(String.valueOf(student.getDateOfBirth()));
+                yearDialog.setTitle("Update Year of Birth");
+                yearDialog.setHeaderText("Current Year of Birth: " + student.getDateOfBirth());
+                yearDialog.setContentText("Enter new year of birth:");
+
+                yearDialog.showAndWait().ifPresent(newYear -> {
+                    try {
+                        int yearOfBirth = Integer.parseInt(newYear);
+                        if (yearOfBirth <= 0) {
+                            outputArea.appendText("Year of birth must be a positive integer.\n");
+                            return;
+                        }
+                        student.setDateOfBirth(yearOfBirth);
+                    } catch (NumberFormatException e) {
+                        outputArea.appendText("Invalid year format. Please enter a valid year.\n");
+                    }
+                });
+
+                outputArea.appendText("Student information updated successfully: " + student.toString() + "\n");
+
+            } catch (NumberFormatException e) {
+                outputArea.appendText("Student ID must be a natural number (positive integer).\n");
+            }
+        });
     }
 
-    // View student details
-    private void viewStudentDetails() {
-        // Logic to view student details
+    // The method for retrieve information about student/students
+    private void viewStudentDetails(TextArea outputArea) {
+        // Создаем диалог для выбора опции
+        ChoiceDialog<String> choiceDialog = new ChoiceDialog<>("View All Students", "View All Students", "Search Student by ID");
+        choiceDialog.setTitle("View Student Details");
+        choiceDialog.setHeaderText("Choose an option to view student details:");
+        choiceDialog.setContentText("Select an option:");
+
+        choiceDialog.showAndWait().ifPresent(choice -> {
+            if (choice.equals("View All Students")) {
+                // Display all students
+                outputArea.appendText("All Students:\n");
+                outputArea.appendText(studentManagement.displayAllStudents());
+
+            } else if (choice.equals("Search Student by ID")) {
+                // Find students by ID
+                TextInputDialog idDialog = new TextInputDialog();
+                idDialog.setTitle("Search Student");
+                idDialog.setHeaderText("Search for a Student");
+                idDialog.setContentText("Enter Student ID:");
+
+                idDialog.showAndWait().ifPresent(id -> {
+                    try {
+                        int studentId = Integer.parseInt(id);
+                        Student student = studentManagement.getStudentById(studentId);
+
+                        if (student == null) {
+                            outputArea.appendText("No student found with ID: " + studentId + "\n");
+                        } else {
+                            outputArea.appendText("Student Details:\n" + student.toString() + "\n");
+                            courseManagement.displayDetails(student); // Используем метод displayDetails из CourseManagement
+                        }
+                    } catch (NumberFormatException e) {
+                        outputArea.appendText("Invalid input. Student ID must be a natural number (positive integer).\n");
+                    }
+                });
+            }
+        });
     }
+
+
 
     // Add new course
     private void addNewCourse() {

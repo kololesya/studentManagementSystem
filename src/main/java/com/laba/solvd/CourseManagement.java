@@ -133,7 +133,7 @@ public class CourseManagement {
         return (double) totalGrades / numberOfCourses;
     }
 
-    public static void displayCourseWithStudents(int courseId) throws CourseNotFoundException {
+    public static void displayCourseWithStudents(int courseId) {
         // Retrieve a course by ID
         Course course = getCourseById(courseId);
         if (course == null) {
