@@ -79,6 +79,7 @@ public class AdministratorInterface {
                     break;
                 case 3:
                     removeStudentFromCourse();
+                    break;
                 case 4:
                     assignGradeToStudent();
                     break;
@@ -236,7 +237,7 @@ public class AdministratorInterface {
         Student student = studentManagement.getStudentById(id);
         if (student != null) {
             student.displayDetails();  // Directly calling displayDetails method from Student class
-            courseManagement.displayDetails();
+            courseManagement.displayDetails(student);
         } else {
             System.out.println("Student not found.");
         }
@@ -287,7 +288,7 @@ public class AdministratorInterface {
     }
 
     // Enrolling student in a course
-    private void enrollStudentInCourse() throws CourseNotFoundException {
+    private void enrollStudentInCourse() {
         System.out.print("Enter student's ID to enroll: ");
         int studentId = getPositiveIntegerInput();
         System.out.print("Enter course code to enroll in: ");
@@ -381,20 +382,20 @@ public class AdministratorInterface {
             System.out.print("Enter student ID: ");
             int studentId = getPositiveIntegerInput();
 
-            Course course = CourseManagement.getCourseById(courseId);
-            if (course == null) {
-                System.out.println("Error: Course not found with ID " + courseId);
-                return;
-            }
-
-            boolean removed = CourseManagement.removeStudentFromCourse(studentId, courseId);
-            if (removed) {
-                System.out.println("Student with ID " + studentId + " removed from course " + course.getNameOfCourse());
+            // Retrieve the student by id
+            Student student = studentManagement.getStudentById(studentId);
+            // Retrieve the course by ID
+            Course course = courseManagement.getCourseById(courseId);
+            if (student != null && course != null) {
+                try {
+                    // Use the method removeStudent
+                    CourseManagement.removeStudentFromCourse(student, course);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("An error occurred:: " + e.getMessage());
+                }
             } else {
-                System.out.println("Student not found in this course.");
+                System.out.println("Invalid student or course.");
             }
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
         } catch (CourseNotFoundException e) {
             throw new RuntimeException(e);
         }

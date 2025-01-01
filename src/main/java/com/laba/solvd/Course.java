@@ -69,6 +69,11 @@ public class Course {
         return totalEnrolledStudents++;
     }
 
+    public int removeStudent(Student student) {
+        enrolledStudents.remove(student);
+        return totalEnrolledStudents--;
+    }
+
     public void assignGradeToStudent(Student student, char grade) {
         studentGrades.put(student, grade);
     }

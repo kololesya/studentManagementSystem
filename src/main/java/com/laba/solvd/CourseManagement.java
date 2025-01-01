@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CourseManagement {
-    private Course course;
     private static List<Course> courseList = new ArrayList<>();  // Static list to store courses
     private static Map<Student, Map<Course, Character>> studentGrades = new HashMap<>();  // Map to store student grades for courses
 
@@ -33,32 +32,56 @@ public class CourseManagement {
         }
     }
 
+    // Get course by ID
+//    public static Course getCourseById(int courseId) throws CourseNotFoundException {
+//        return courseList.stream()
+//                .filter(course -> course.getId() == courseId)
+//                .findFirst()
+//                .orElseThrow(() -> new CourseNotFoundException("Course with ID " + courseId + " not found."));
+//    }
+
     public static Course getCourseById(int courseId) {
-        // Iterate through the course list to find a course with the given ID
-        for (Course course : courseList) {
-            if (course.getId() == courseId) {
-                return course;  // Return the course if it exists
-            }
-        }
-        return null;  // Return null if no course with the given ID is found
+        return courseList.stream()
+                .filter(course -> course.getId() == courseId)
+                .findFirst()
+                .orElse(null);  // Return null if no course is found
     }
 
-    // Add a student on a course
-    public static void enrollStudent(Student student, Course course) {
-        // Check if the student is already enrolled
-        boolean isAlreadyEnrolled = course.getEnrolledStudents().stream()
-                .anyMatch(s -> s.getStudentId() == student.getStudentId());
+    // Check if the student is enrolled in a given course
+    private static boolean isStudentEnrolled(Student student, Course course) {
+        return course.getEnrolledStudents().contains(student);
+    }
 
-        if (isAlreadyEnrolled) {
+    // Enroll student into a course
+    public static void enrollStudent(Student student, Course course) {
+        if (isStudentEnrolled(student, course)) {
             System.out.println("Student " + student.getName() + " is already enrolled in course: " + course.getNameOfCourse());
         } else {
             if (course.getEnrolledStudents().size() < course.getMaxCapacity()) {
                 course.addStudent(student);
-                studentGrades.computeIfAbsent(student, k -> new HashMap<>()); // Создаем запись для студента
+                studentGrades.computeIfAbsent(student, k -> new HashMap<>());  // Initialize grade map for the student if needed
                 System.out.println("Student " + student.getName() + " successfully enrolled in course: " + course.getNameOfCourse());
             } else {
                 System.out.println("Course " + course.getNameOfCourse() + " is full.");
             }
+        }
+    }
+
+    public static void removeStudentFromCourse(Student student, Course course) throws CourseNotFoundException {
+        if (course == null) {
+            System.out.println("Course not found with ID " + course.getId());
+        }
+
+        if (!isStudentEnrolled(student, course)) {
+            System.out.println("Student " + student.getName() + " is not enrolled in course: " + course.getNameOfCourse());
+        } else {
+            Map<Student, Map<Course, Character>> studentGrades = CourseManagement.studentGrades; // Получаем коллекцию оценок
+            if (studentGrades.containsKey(student)) {
+                studentGrades.get(student).remove(course); // Удаляем оценки для данного курса
+                System.out.println("Grade for student " + student.getName() + " removed for course: " + course.getNameOfCourse());
+            }
+            course.removeStudent(student);
+            System.out.println("Student with ID " + student.getStudentId() + " removed from course " + course.getNameOfCourse());
         }
     }
 
@@ -110,23 +133,7 @@ public class CourseManagement {
         return (double) totalGrades / numberOfCourses;
     }
 
-    public static boolean removeStudentFromCourse(int studentId, int courseId) throws CourseNotFoundException {
-        Course course = getCourseById(courseId);
-        if (course == null) {
-            System.out.println("Course not found with ID " + courseId);
-            return false;
-        }
-
-        boolean removed = course.getEnrolledStudents().removeIf(student -> student.getStudentId() == studentId);
-        if (removed) {
-            System.out.println("Student with ID " + studentId + " removed from course " + course.getNameOfCourse());
-        } else {
-            System.out.println("Student with ID " + studentId + " not found in course " + course.getNameOfCourse());
-        }
-        return removed;
-    }
-
-    public static void displayCourseWithStudents(int courseId) {
+    public static void displayCourseWithStudents(int courseId) throws CourseNotFoundException {
         // Retrieve a course by ID
         Course course = getCourseById(courseId);
         if (course == null) {
@@ -225,8 +232,20 @@ public class CourseManagement {
         return (double) totalPoints / totalGrades;
     }
 
-    public void displayDetails(){
-        //course.displayDetails();
-        System.out.println("All student's courses with grades " + studentGrades.get(course).toString());
+    public void displayDetails(Student student) {
+        // Получаем оценки студента по всем курсам
+        Map<Course, Character> coursesGrades = studentGrades.get(student);
+
+        if (coursesGrades == null || coursesGrades.isEmpty()) {
+            System.out.println("Student has no grades assigned for any courses.");
+        } else {
+            // Перебираем все курсы и выводим их с оценками
+            for (Course c : courseList) {
+                if (isStudentEnrolled(student, c)) {  // Проверяем, зачислен ли студент на курс
+                    Character grade = coursesGrades.get(c);  // Получаем оценку студента для этого курса
+                    System.out.println("Course: " + c.getNameOfCourse() + " - Grade: " + (grade != null ? grade : "Not Assigned"));
+                }
+            }
+        }
     }
 }
