@@ -237,7 +237,7 @@ public class AdministratorInterface {
         Student student = studentManagement.getStudentById(id);
         if (student != null) {
             System.out.println(student.toString());  // Directly calling displayDetails method from Student class
-            courseManagement.displayDetails(student);
+            courseManagement.displayStudentDetails(student);
         } else {
             System.out.println("Student not found.");
         }
@@ -346,7 +346,7 @@ public class AdministratorInterface {
     // Viewing all courses
     private void viewAllCourses() {
         System.out.println("--- All Courses ---");
-        CourseManagement.displayAllCourses();  // Directly calling the method from CourseManagement to display courses
+        //CourseManagement.displayAllCourses();  // Directly calling the method from CourseManagement to display courses
     }
 
     private void calculateStudentGrade() {

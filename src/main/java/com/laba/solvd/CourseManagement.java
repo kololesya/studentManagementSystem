@@ -32,13 +32,10 @@ public class CourseManagement {
         }
     }
 
-    // Get course by ID
-//    public static Course getCourseById(int courseId) throws CourseNotFoundException {
-//        return courseList.stream()
-//                .filter(course -> course.getId() == courseId)
-//                .findFirst()
-//                .orElseThrow(() -> new CourseNotFoundException("Course with ID " + courseId + " not found."));
-//    }
+    public static boolean isStudentEnrolledInCourse(Student student, Course course) {
+        return course.getEnrolledStudents().contains(student);
+    }
+
 
     public static Course getCourseById(int courseId) {
         return courseList.stream()
@@ -48,7 +45,7 @@ public class CourseManagement {
     }
 
     // Check if the student is enrolled in a given course
-    private static boolean isStudentEnrolled(Student student, Course course) {
+    static boolean isStudentEnrolled(Student student, Course course) {
         return course.getEnrolledStudents().contains(student);
     }
 
@@ -115,22 +112,17 @@ public class CourseManagement {
     // Calculate overall grade for a student
     public static double calculateOverallGradeForStudent(Student student) {
         Map<Course, Character> studentCourses = studentGrades.get(student);
-        if (studentCourses == null || studentCourses.isEmpty()) {
-            throw new StudentNotEnrolledException("Student " + student.getName() + " is not enrolled in any course.");
-        }
         int totalGrades = 0;
-        int numberOfCourses = studentCourses.size();
+        int gradeSum = 0;
 
         for (Character grade : studentCourses.values()) {
             if (grade != null) {
-                totalGrades += gradeToPoints(grade); // Преобразуем оценку в баллы
+                gradeSum += convertGradeToPoints(grade); // Convert grade to numeric for calculations
+                totalGrades++;
             }
         }
 
-        displayAllStudentsGrades();
-
-        // Calculate and return the average grade
-        return (double) totalGrades / numberOfCourses;
+        return totalGrades > 0 ? (double) gradeSum / totalGrades : -1; // -1 indicates no grades
     }
 
     public static void displayCourseWithStudents(int courseId) {
@@ -163,7 +155,7 @@ public class CourseManagement {
     }
 
     // Convert letter grade to numeric points (A=4, B=3, C=2, D=1, F=0)
-    private static int gradeToPoints(char grade) {
+    private static int convertGradeToPoints(char grade) {
         switch (grade) {
             case 'A': return 4;
             case 'B': return 3;
@@ -174,17 +166,18 @@ public class CourseManagement {
         }
     }
 
-    // Display all courses
-    public static void displayAllCourses() {
+    // Display all courses and return as a string
+    public static String getAllCourses() {
         if (courseList.isEmpty()) {
-            System.out.println("No courses available.");
-            return;
+            return "No courses available.";
         }
-        System.out.println("List of available courses:");
+        StringBuilder coursesInfo = new StringBuilder("List of available courses:\n");
         for (Course course : courseList) {
-            System.out.println(course);
+            coursesInfo.append(course).append("\n");
         }
+        return coursesInfo.toString();
     }
+
 
     // Display all students and their overall grades
     private static void displayAllStudentsGrades() {
@@ -219,7 +212,7 @@ public class CourseManagement {
         for (Map.Entry<Student, Character> entry : studentGrades.entrySet()) {
             Character grade = entry.getValue();
             if (grade != null) { // Учитываем только студентов с назначенными оценками
-                totalPoints += gradeToPoints(grade);
+                totalPoints += convertGradeToPoints(grade);
                 totalGrades++;
             }
         }
@@ -232,20 +225,36 @@ public class CourseManagement {
         return (double) totalPoints / totalGrades;
     }
 
-    public void displayDetails(Student student) {
-        // Получаем оценки студента по всем курсам
+    public static String displayStudentDetails(Student student) {
+        StringBuilder details = new StringBuilder();
+
+        // Retrieve grades
         Map<Course, Character> coursesGrades = studentGrades.get(student);
 
-        if (coursesGrades == null || coursesGrades.isEmpty()) {
-            System.out.println("Student has no grades assigned for any courses.");
-        } else {
-            // Перебираем все курсы и выводим их с оценками
-            for (Course c : courseList) {
-                if (isStudentEnrolled(student, c)) {  // Проверяем, зачислен ли студент на курс
-                    Character grade = coursesGrades.get(c);  // Получаем оценку студента для этого курса
-                    System.out.println("Course: " + c.getNameOfCourse() + " - Grade: " + (grade != null ? grade : "Not Assigned"));
-                }
+        if (coursesGrades == null) {
+            coursesGrades = new HashMap<>();
+        }
+
+        // Header for student details
+        details.append("Enrolled Courses:\n");
+
+        // Iterate through all courses
+        for (Course c : courseList) {
+            if (isStudentEnrolled(student, c)) { // Check if student is enrolled in the course
+                Character grade = coursesGrades.get(c); // Get the student's grade for the course
+                details.append("Course: ")
+                        .append(c.getNameOfCourse())
+                        .append(", Grade: ")
+                        .append(grade != null ? grade : "Not Assigned")
+                        .append("\n");
             }
         }
+
+        // Calculate average grade
+        double averageGrade = calculateOverallGradeForStudent(student);
+        details.append("Overall Average Grade: ")
+                .append(averageGrade >= 0 ? String.format("%.2f", averageGrade) : "No Grades Assigned");
+
+        return details.toString();
     }
 }
